@@ -146,7 +146,6 @@ void Laborator9::Update(float deltaTimeSeconds)
 	{
 		glm::mat4 modelMatrix = glm::mat4(1);
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(2, 0.5f, 0));
-		modelMatrix = glm::rotate(modelMatrix, RADIANS(60.0f), glm::vec3(1, 0, 0));
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(0.75f));
 		RenderSimpleMesh(meshes["box"], shaders["ShaderLab9"], modelMatrix, mapTextures["crate"]);
 	}
@@ -155,7 +154,6 @@ void Laborator9::Update(float deltaTimeSeconds)
 		glm::mat4 modelMatrix = glm::mat4(1);
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(-2, 0.5f, 0));
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(0.75f));
-		modelMatrix = glm::rotate(modelMatrix, RADIANS(75.0f), glm::vec3(1, 1, 0));
 		RenderSimpleMesh(meshes["box"], shaders["ShaderLab9"], modelMatrix, mapTextures["random"]);
 	}
 
@@ -163,7 +161,20 @@ void Laborator9::Update(float deltaTimeSeconds)
 		glm::mat4 modelMatrix = glm::mat4(1);
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
-		RenderSimpleMesh(meshes["square"], shaders["ShaderLab9"], modelMatrix, mapTextures["grass"]);
+
+		glm::vec3 meshForward = glm::normalize(glm::vec3(modelMatrix[0][2], modelMatrix[1][2], modelMatrix[2][2]));
+
+		float angleBetweenObjAndCamera = acos(dot(cameraForward, meshForward));
+	
+		if (cameraForward.x < 0) {
+			modelMatrix = glm::rotate(modelMatrix, -angleBetweenObjAndCamera, glm::vec3(0, 1, 0));
+		}
+		else {
+			modelMatrix = glm::rotate(modelMatrix, angleBetweenObjAndCamera, glm::vec3(0, 1, 0));
+		}
+        
+
+        RenderSimpleMesh(meshes["square"], shaders["ShaderLab9"], modelMatrix, mapTextures["grass"]);
 	}
 
 	{
@@ -207,6 +218,18 @@ void Laborator9::RenderSimpleMesh(Mesh *mesh, Shader *shader, const glm::mat4 & 
 	glm::mat4 projectionMatrix = GetSceneCamera()->GetProjectionMatrix();
 	int loc_projection_matrix = glGetUniformLocation(shader->program, "Projection");
 	glUniformMatrix4fv(loc_projection_matrix, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+	//BONUS
+	if (mesh == meshes["sphere"])
+	{
+		glUniform1f(glGetUniformLocation(shader->program, "elapsedTime"), (float)Engine::GetElapsedTime());
+		
+	}
+	else
+	{
+		glUniform1f(glGetUniformLocation(shader->program, "elapsedTime"), -1.0f);
+	}
+		
 
 	if (texture1)
 	{
@@ -303,9 +326,10 @@ void Laborator9::OnInputUpdate(float deltaTime, int mods)
 	{
 		glm::vec3 up = glm::vec3(0, 1, 0);
 		glm::vec3 right = GetSceneCamera()->transform->GetLocalOXVector();
-		glm::vec3 forward = GetSceneCamera()->transform->GetLocalOZVector();
-		forward = glm::normalize(glm::vec3(forward.x, 0, forward.z));
+		cameraForward = GetSceneCamera()->transform->GetLocalOZVector();
+		cameraForward = glm::normalize(glm::vec3(cameraForward.x, 0, cameraForward.z));
 	}
+	
 }
 
 void Laborator9::OnKeyPress(int key, int mods)

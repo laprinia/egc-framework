@@ -29,6 +29,6 @@ class Laborator9 : public SimpleScene
 		void OnWindowResize(int width, int height) override;
 
 		std::unordered_map<std::string, Texture2D*> mapTextures;
-		
+		glm::vec3 cameraForward;
 		GLuint randomTextureID;
 };
