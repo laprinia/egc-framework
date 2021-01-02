@@ -162,6 +162,7 @@ void Laborator9::Update(float deltaTimeSeconds)
 		modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 0.5f, 0.0f));
 		modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5f));
 
+		//BONUS
 		glm::vec3 meshForward = glm::normalize(glm::vec3(modelMatrix[0][2], modelMatrix[1][2], modelMatrix[2][2]));
 
 		float angleBetweenObjAndCamera = acos(dot(cameraForward, meshForward));

@@ -61,6 +61,12 @@
     <Filter Include="Laboratoare\Laborator9\Shaders">
       <UniqueIdentifier>{a7995ec9-7a24-4990-8d42-92088d9a6dfb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Skyroads">
+      <UniqueIdentifier>{fd056dca-0d48-4a6d-ab56-b1c37b10d946}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Skyroads\Shaders">
+      <UniqueIdentifier>{5568c1c7-7702-4816-accf-8d5ef89fe44b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Source\Core\Engine.cpp">
@@ -78,7 +84,6 @@
     <ClCompile Include="..\Source\Core\GPU\Shader.cpp">
       <Filter>Core\GPU</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Main.cpp" />
     <ClCompile Include="..\Source\Laboratoare\Laborator1\Laborator1.cpp">
       <Filter>Laboratoare\Laborator1</Filter>
     </ClCompile>
@@ -139,9 +144,10 @@
     <ClCompile Include="..\Source\Laboratoare\Laborator9\Laborator9.cpp">
       <Filter>Laboratoare\Laborator9</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Laboratoare\TemaLaborator1\TemaLaborator1.cpp">
-      <Filter>Laboratoare</Filter>
+    <ClCompile Include="..\Source\Skyroads\Skyroads.cpp">
+      <Filter>Skyroads</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\World.h">
@@ -243,8 +249,8 @@
     <ClInclude Include="..\Source\Laboratoare\Laborator9\Laborator9.h">
       <Filter>Laboratoare\Laborator9</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Laboratoare\TemaLaborator1\TemaLaborator1.h">
-      <Filter>Laboratoare</Filter>
+    <ClInclude Include="..\Source\Skyroads\Skyroads.h">
+      <Filter>Skyroads</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -273,5 +279,14 @@
       <Filter>Laboratoare\Laborator9\Shaders</Filter>
     </None>
     <None Include="ClassDiagram.cd" />
+    <None Include="..\Source\Skyroads\Shaders\GeometryShader.glsl">
+      <Filter>Skyroads\Shaders</Filter>
+    </None>
+    <None Include="..\Source\Skyroads\Shaders\FragmentShader.glsl">
+      <Filter>Skyroads\Shaders</Filter>
+    </None>
+    <None Include="..\Source\Skyroads\Shaders\VertexShader.glsl">
+      <Filter>Skyroads\Shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>

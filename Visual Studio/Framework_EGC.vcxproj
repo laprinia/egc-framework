@@ -44,8 +44,8 @@
     <ClCompile Include="..\Source\Laboratoare\Laborator7\Laborator7.cpp" />
     <ClCompile Include="..\Source\Laboratoare\Laborator8\Laborator8.cpp" />
     <ClCompile Include="..\Source\Laboratoare\Laborator9\Laborator9.cpp" />
-    <ClCompile Include="..\Source\Laboratoare\TemaLaborator1\TemaLaborator1.cpp" />
     <ClCompile Include="..\Source\Main.cpp" />
+    <ClCompile Include="..\Source\Skyroads\Skyroads.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Component\CameraInput.h" />
@@ -81,7 +81,7 @@
     <ClInclude Include="..\Source\Laboratoare\Laborator7\Laborator7.h" />
     <ClInclude Include="..\Source\Laboratoare\Laborator8\Laborator8.h" />
     <ClInclude Include="..\Source\Laboratoare\Laborator9\Laborator9.h" />
-    <ClInclude Include="..\Source\Laboratoare\TemaLaborator1\TemaLaborator1.h" />
+    <ClInclude Include="..\Source\Skyroads\Skyroads.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Source\Laboratoare\Laborator6\Shaders\FragmentShader.glsl" />
@@ -92,6 +92,9 @@
     <None Include="..\Source\Laboratoare\Laborator8\Shaders\VertexShader.glsl" />
     <None Include="..\Source\Laboratoare\Laborator9\Shaders\FragmentShader.glsl" />
     <None Include="..\Source\Laboratoare\Laborator9\Shaders\VertexShader.glsl" />
+    <None Include="..\Source\Skyroads\Shaders\FragmentShader.glsl" />
+    <None Include="..\Source\Skyroads\Shaders\GeometryShader.glsl" />
+    <None Include="..\Source\Skyroads\Shaders\VertexShader.glsl" />
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
