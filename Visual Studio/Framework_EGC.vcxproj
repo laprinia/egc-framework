@@ -93,7 +93,6 @@
     <None Include="..\Source\Laboratoare\Laborator9\Shaders\FragmentShader.glsl" />
     <None Include="..\Source\Laboratoare\Laborator9\Shaders\VertexShader.glsl" />
     <None Include="..\Source\Skyroads\Shaders\FragmentShader.glsl" />
-    <None Include="..\Source\Skyroads\Shaders\GeometryShader.glsl" />
     <None Include="..\Source\Skyroads\Shaders\VertexShader.glsl" />
     <None Include="ClassDiagram.cd" />
   </ItemGroup>
