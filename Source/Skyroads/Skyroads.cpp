@@ -5,6 +5,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <Core/Engine.h>
+#include <Engine/Component/Transform/Transform.h>
 
 Skyroads::Skyroads(){
 
@@ -78,7 +79,27 @@ void Skyroads::RenderAMesh(Mesh* mesh, Shader* shader, const glm::mat4 &modelMat
 		return;
 
 	glUseProgram(shader->program);
-	int location = glGetUniformLocation(shader->program, "Model");
+
+	int location = glGetUniformLocation(shader->program, "light_position");
+	glUniform3fv(location, 1, glm::value_ptr(lightPosition));
+
+	glm::vec3 eyePosition = GetSceneCamera()->transform->GetWorldPosition();
+	location = glGetUniformLocation(shader->program, "eye_position");
+	glUniform3fv(location, 1, glm::value_ptr(eyePosition));
+
+	location = glGetUniformLocation(shader->program, "material_shininess");
+	glUniform1i(location, materialShininess);
+
+	location = glGetUniformLocation(shader->program, "material_kd");
+	glUniform1f(location, materialKd);
+
+	location = glGetUniformLocation(shader->program, "material_ks");
+	glUniform1f(location, materialKs);
+
+	location = glGetUniformLocation(shader->program, "object_color");
+	glUniform3fv(location, 1, glm::value_ptr(color));
+
+	location = glGetUniformLocation(shader->program, "Model");
 	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(modelMatrix));
 
 	location = glGetUniformLocation(shader->program, "View");
@@ -125,7 +146,7 @@ void Skyroads::Update(float deltaTimeSeconds) {
 	GeneratePlatforms(0);
 
 	glm::mat4 modelMatrix = glm::mat4(1);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 2.0f, -1.0f));
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 2.0f, -10.0f));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(2.0f));
 	Skyroads::RenderAMesh(meshes["sphere"], shaders["Skyroads"], modelMatrix, playerColor);
 	
