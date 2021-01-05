@@ -16,7 +16,7 @@ Skyroads::~Skyroads() {
 
 void Skyroads::Init() {
 	auto camera = GetSceneCamera();
-	camera->SetPositionAndRotation(glm::vec3(0, 4, 10), glm::vec3(-10 * TO_RADIANS, 0, 0));
+	camera->SetPositionAndRotation(glm::vec3(0, 4, 6), glm::vec3(-10 * TO_RADIANS, 0, 0));
 	camera->Update();
 
 
@@ -32,12 +32,26 @@ void Skyroads::Init() {
 		Mesh* mesh = new Mesh("box");
 		mesh->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "box.obj");
 		meshes[mesh->GetMeshID()] = mesh;
+
+		Mesh* mesh2 = new Mesh("sphere");
+		mesh2->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "sphere.obj");
+		meshes[mesh2->GetMeshID()] = mesh2;
+	}
+	{
+		platformColors.push_back(glm::vec3(1 - intensity, 0.51f-intensity, 0.31f - intensity));
+		platformColors.push_back(glm::vec3(0.251f - intensity, 0.675f - intensity, 1 - intensity));
+		platformColors.push_back(glm::vec3(0.639f - intensity, 0.251f - intensity, 1 - intensity));
+		platformColors.push_back(glm::vec3(0.251 - intensity, 1 - intensity, 0.686f - intensity));
+		platformColors.push_back(glm::vec3(1 - intensity, 0.765f - intensity, 0.251f - intensity));
+		platformColors.push_back(glm::vec3(0.863f - intensity, 1 - intensity, 0.251f - intensity));
+			
 	}
 	{
 		
 		for (int i = 0; i < laneNumber * rowNumber;i++) {
 			randomWidths.push_back( GenerateRandomWidth());
 			randomLengths.push_back( GenerateRandomLength());
+			randomIndices.push_back(rand() % 6);
 		}
 	}
 
@@ -58,7 +72,31 @@ int Skyroads::GenerateRandomLength() {
 int Skyroads::GenerateRandomWidth() {
 	return rand() % (maxPlatformWidth - minPlatformWidth + 1) + minPlatformWidth;
 }
-void Skyroads::GenerateRowOfPlatforms(int zOffset ) {
+
+void Skyroads::RenderAMesh(Mesh* mesh, Shader* shader, const glm::mat4 &modelMatrix, const glm::vec3 &color) {
+	if (!mesh || !shader || !shader->GetProgramID())
+		return;
+
+	glUseProgram(shader->program);
+	int location = glGetUniformLocation(shader->program, "Model");
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(modelMatrix));
+
+	location = glGetUniformLocation(shader->program, "View");
+	glm::mat4 viewMatrix = GetSceneCamera()->GetViewMatrix();
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(viewMatrix));
+
+	location = glGetUniformLocation(shader->program, "Projection");
+	glm::mat4 projectionMatrix = GetSceneCamera()->GetProjectionMatrix();
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
+
+	location = glGetUniformLocation(shader->program, "color");
+	glUniform3f(location, color.r,color.g,color.b);
+
+	glBindVertexArray(mesh->GetBuffers()->VAO);
+	glDrawElements(mesh->GetDrawMode(), static_cast<int>(mesh->indices.size()), GL_UNSIGNED_SHORT, 0);
+
+}
+void Skyroads::GeneratePlatforms(int zOffset ) {
 	int k = 0;
 	
 	
@@ -71,24 +109,30 @@ void Skyroads::GenerateRowOfPlatforms(int zOffset ) {
 
 			modelMatrix = glm::translate(modelMatrix, glm::vec3(-(startIndex + 3), 0.5f, -(zOffset + randomLengths[k] / 2)));
 			modelMatrix = glm::scale(modelMatrix, glm::vec3(6.0f, 1.0f, randomLengths[k]));
-
-			RenderMesh(meshes["box"], shaders["VertexNormal"], modelMatrix);
+			
+			RenderAMesh(meshes["box"], shaders["Skyroads"], modelMatrix, platformColors[randomIndices[k]]);
 
 
 			startIndex += randomWidths[k];
 			k++;
+			
 		}
 		zOffset += maxPlatformLength;
 	}
 	
 }
 void Skyroads::Update(float deltaTimeSeconds) {
-	GenerateRowOfPlatforms(0);
+	GeneratePlatforms(0);
+
+	glm::mat4 modelMatrix = glm::mat4(1);
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 2.0f, -1.0f));
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(2.0f));
+	Skyroads::RenderAMesh(meshes["sphere"], shaders["Skyroads"], modelMatrix, playerColor);
 	
 }
 
 void Skyroads::FrameEnd() {
-	DrawCoordinatSystem();
+	//DrawCoordinatSystem();
 }
 
 void Skyroads::OnInputUpdate(float deltaTime, int mods) {
