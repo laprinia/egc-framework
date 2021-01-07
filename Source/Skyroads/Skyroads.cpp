@@ -19,6 +19,7 @@ void Skyroads::Init() {
 	auto camera = GetSceneCamera();
 	camera->SetPositionAndRotation(glm::vec3(0, 4, 6), glm::vec3(-10 * TO_RADIANS, 0, 0));
 	camera->Update();
+	
 
 
 	{
@@ -55,13 +56,17 @@ void Skyroads::Init() {
 			randomIndices.push_back(rand() % 6);
 		}
 	}
+	{
+		speed = 1;
+		translateZ = 0;
+	}
 
 }
 
 void Skyroads::FrameStart() {
 
 
-	glClearColor(0.37f, 0.058f, 0.04f, 0);
+	glClearColor(0.137f, 0.102f, 0.2f, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glm::ivec2 resolution = window->GetResolution();
 	glViewport(0, 0, resolution.x, resolution.y);
@@ -127,18 +132,19 @@ void Skyroads::GeneratePlatforms(int zOffset ) {
 
 			glm::mat4 modelMatrix = glm::mat4(1);
 
-
-			modelMatrix = glm::translate(modelMatrix, glm::vec3(-(startIndex + 3), 0.5f, -(zOffset + randomLengths[k] / 2)));
+			glm::vec3 gravityCenter = glm::vec3(-(startIndex + 3), 0.5f, -(zOffset + randomLengths[k] / 2));
+			platformCenters[j][i] = gravityCenter;
+			modelMatrix = glm::translate(modelMatrix, gravityCenter);
 			modelMatrix = glm::scale(modelMatrix, glm::vec3(6.0f, 1.0f, randomLengths[k]));
 			
 			RenderAMesh(meshes["box"], shaders["Skyroads"], modelMatrix, platformColors[randomIndices[k]]);
 
-
+			
 			startIndex += randomWidths[k];
 			k++;
 			
 		}
-		zOffset += maxPlatformLength;
+		zOffset += maxPlatformLength+1;
 	}
 	
 }
@@ -146,7 +152,10 @@ void Skyroads::Update(float deltaTimeSeconds) {
 	GeneratePlatforms(0);
 
 	glm::mat4 modelMatrix = glm::mat4(1);
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(0.0f, 2.0f, -10.0f));
+	float x = (float)platformCenters[currentRow][currentLane].x;
+	float z = (float)platformCenters[currentRow][currentLane].z;
+
+	modelMatrix = glm::translate(modelMatrix, glm::vec3(x, 2.0f, -1.0f+translateZ));
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(2.0f));
 	Skyroads::RenderAMesh(meshes["sphere"], shaders["Skyroads"], modelMatrix, playerColor);
 	
@@ -158,10 +167,33 @@ void Skyroads::FrameEnd() {
 
 void Skyroads::OnInputUpdate(float deltaTime, int mods) {
 
+	float offset = deltaTime * speed;
+	if (window->KeyHold(GLFW_KEY_W)) {
+		translateZ -= offset;
+		speed += 0.4f;
+		
+	}
+	else if (window->KeyHold(GLFW_KEY_S)) {
+		translateZ += offset;
+		speed -= 0.4f;
+	}
+	
+	
 }
 
 void Skyroads::OnKeyPress(int key, int mods) {
-
+	if (window->KeyHold(GLFW_KEY_A)) {
+		if (currentLane < laneNumber) {
+			currentLane += 1;
+		}
+	 
+	}
+	else if (window->KeyHold(GLFW_KEY_D)) {
+		if (currentLane > 0) {
+			currentLane -= 1;
+		}
+	 
+	}
 }
 void Skyroads::OnKeyRelease(int key, int mods) {
 

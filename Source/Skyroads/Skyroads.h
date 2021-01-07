@@ -23,8 +23,8 @@ private:
 	void OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods) override;
 	void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
 	void OnWindowResize(int width, int height) override;
-	const int laneNumber = 4;
-	const int rowNumber = 5;
+	const static int laneNumber = 4;
+	const static int rowNumber = 5;
 	const int minPlatformLength = 5;
 	const int maxPlatformLength = 20;
 	const int minPlatformWidth = 7;
@@ -39,5 +39,10 @@ private:
 	std::vector<int> randomWidths;
 	std::vector<int> randomIndices;
 	std::vector<glm::vec3> platformColors;
+	glm::vec3 platformCenters[rowNumber][laneNumber];
+	float translateZ;
+	float speed;
+	int currentRow = 0;
+	int currentLane = 1;
 
 };
