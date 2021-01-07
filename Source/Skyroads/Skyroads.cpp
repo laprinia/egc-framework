@@ -50,9 +50,13 @@ void Skyroads::Init() {
 	}
 	{
 		
-		for (int i = 0; i < laneNumber * rowNumber;i++) {
-			randomWidths.push_back( GenerateRandomWidth());
-			randomLengths.push_back( GenerateRandomLength());
+		for (int j = 0; j < rowNumber; j++) {
+			for (int i = 0; i < laneNumber; i++) {
+				randomWidths[j][i]=GenerateRandomWidth();
+				randomLengths[j][i]=GenerateRandomLength();
+			}
+		}
+		for (int i = 0; i < laneNumber * rowNumber; i++) {
 			randomIndices.push_back(rand() % 6);
 		}
 	}
@@ -123,24 +127,22 @@ void Skyroads::RenderAMesh(Mesh* mesh, Shader* shader, const glm::mat4 &modelMat
 
 }
 void Skyroads::GeneratePlatforms(int zOffset ) {
-	int k = 0;
-	
-	
+	int k = 0;	
 	for (int j = 0; j < rowNumber; j++) {
 		int startIndex = -12;
 		for (int i = 0; i < laneNumber; i++) {
 
 			glm::mat4 modelMatrix = glm::mat4(1);
 
-			glm::vec3 gravityCenter = glm::vec3(-(startIndex + 3), 0.5f, -(zOffset + randomLengths[k] / 2));
+			glm::vec3 gravityCenter = glm::vec3(-(startIndex + 3), 0.5f, -(zOffset + randomLengths[j][i] / 2));
 			platformCenters[j][i] = gravityCenter;
 			modelMatrix = glm::translate(modelMatrix, gravityCenter);
-			modelMatrix = glm::scale(modelMatrix, glm::vec3(6.0f, 1.0f, randomLengths[k]));
+			modelMatrix = glm::scale(modelMatrix, glm::vec3(6.0f, 1.0f, randomLengths[j][i]));
 			
 			RenderAMesh(meshes["box"], shaders["Skyroads"], modelMatrix, platformColors[randomIndices[k]]);
 
 			
-			startIndex += randomWidths[k];
+			startIndex += randomWidths[j][i];
 			k++;
 			
 		}
@@ -152,12 +154,22 @@ void Skyroads::Update(float deltaTimeSeconds) {
 	GeneratePlatforms(0);
 
 	glm::mat4 modelMatrix = glm::mat4(1);
-	float x = (float)platformCenters[currentRow][currentLane].x;
-	float z = (float)platformCenters[currentRow][currentLane].z;
+	float platformX = (float)platformCenters[currentRow][currentLane].x;
+	float platformZ = (float)platformCenters[currentRow][currentLane].z;
 
-	modelMatrix = glm::translate(modelMatrix, glm::vec3(x, 2.0f, -1.0f+translateZ));
+	float offset = deltaTimeSeconds * speed;
+     translateZ += offset;
+	glm::vec3 sphereCoord = glm::vec3(platformX, 2.0f, -1.0f - translateZ);
+	modelMatrix = glm::translate(modelMatrix,sphereCoord);
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(2.0f));
-	Skyroads::RenderAMesh(meshes["sphere"], shaders["Skyroads"], modelMatrix, playerColor);
+	//todo if in bounds of platform
+	if (sphereCoord.z > platformZ-randomLengths[currentRow][currentLane]/2) {
+		Skyroads::RenderAMesh(meshes["sphere"], shaders["Skyroads"], modelMatrix, playerColor);
+		auto camera = GetSceneCamera();
+		camera->SetPositionAndRotation(glm::vec3(sphereCoord.x, sphereCoord.y + 4, sphereCoord.z + 10), glm::vec3(-10 * TO_RADIANS, 0, 0));
+		camera->Update();
+	}
+	
 	
 }
 
@@ -169,13 +181,16 @@ void Skyroads::OnInputUpdate(float deltaTime, int mods) {
 
 	float offset = deltaTime * speed;
 	if (window->KeyHold(GLFW_KEY_W)) {
-		translateZ -= offset;
+	
 		speed += 0.4f;
 		
 	}
 	else if (window->KeyHold(GLFW_KEY_S)) {
-		translateZ += offset;
-		speed -= 0.4f;
+	
+		if (speed > 1) {
+			speed -= 0.4f;
+		}
+		
 	}
 	
 	

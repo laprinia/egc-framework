@@ -35,13 +35,13 @@ private:
 	const int materialShininess = 10;
 	const float materialKd = 0.5f;
 	const float materialKs = 0.5f;
-	std::vector<int> randomLengths;
-	std::vector<int> randomWidths;
+	int randomWidths[rowNumber][laneNumber];
+	int randomLengths[rowNumber][laneNumber];
 	std::vector<int> randomIndices;
 	std::vector<glm::vec3> platformColors;
 	glm::vec3 platformCenters[rowNumber][laneNumber];
-	float translateZ;
 	float speed;
+	float translateZ;
 	int currentRow = 0;
 	int currentLane = 1;
 
