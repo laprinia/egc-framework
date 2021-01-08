@@ -13,7 +13,10 @@ private:
 	void FrameEnd() override;
 	int GenerateRandomLength();
 	int GenerateRandomWidth();
+	bool CheckEligibleOnRows();
+	bool CheckEligibleOnLanes();
 	void GeneratePlatforms(int zOffset);
+	void GeneratePlatformData();
 	void RenderAMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMatrix, const glm::vec3& color);
 	void OnInputUpdate(float deltaTime, int mods) override;
 	void OnKeyPress(int key, int mods) override;
@@ -27,8 +30,8 @@ private:
 	const static int rowNumber = 5;
 	const int minPlatformLength = 5;
 	const int maxPlatformLength = 20;
-	const int minPlatformWidth = 7;
-	const int maxPlatformWidth = 10;
+	const int minPlatformWidth = 6+2;
+	const int maxPlatformWidth = 6+7;
 	const glm::vec3 playerColor = glm::vec3(0.989f, 0.357f, 0.357f);
 	const float intensity = 0.20f;
 	const glm::vec3 lightPosition = glm::vec3(0, 80, 0);
@@ -44,5 +47,9 @@ private:
 	float translateZ;
 	int currentRow = 0;
 	int currentLane = 1;
+	glm::vec3 sphereCoordonate;
+	float jumpableRowSpace = 6.0f;
+	float jumpableLaneSpace = 4.0f;
 
 };
+

@@ -49,15 +49,10 @@ void Skyroads::Init() {
 			
 	}
 	{
-		
-		for (int j = 0; j < rowNumber; j++) {
-			for (int i = 0; i < laneNumber; i++) {
-				randomWidths[j][i]=GenerateRandomWidth();
-				randomLengths[j][i]=GenerateRandomLength();
-			}
-		}
-		for (int i = 0; i < laneNumber * rowNumber; i++) {
-			randomIndices.push_back(rand() % 6);
+		GeneratePlatformData();
+		while (!CheckEligibleOnRows() && !CheckEligibleOnLanes()) {
+			GeneratePlatformData();
+			std::cout << "no solution" << std::endl;
 		}
 	}
 	{
@@ -65,6 +60,59 @@ void Skyroads::Init() {
 		translateZ = 0;
 	}
 
+}
+
+void Skyroads::GeneratePlatformData() {
+
+	for (int j = 0; j < rowNumber; j++) {
+		for (int i = 0; i < laneNumber; i++) {
+			randomWidths[j][i] = GenerateRandomWidth();
+			randomLengths[j][i] = GenerateRandomLength();
+		}
+
+	}
+	for (int i = 0; i < laneNumber * rowNumber; i++) {
+		randomIndices.push_back(rand() % 6);
+	}
+}
+bool Skyroads::CheckEligibleOnRows() {
+	int count = 0;
+	int checkCount = 0;
+	float frontPlatformStart;
+	float spaceBetween;
+	for (int j = 0; j < rowNumber - 1; j++) {
+		for (int i = 0; i < laneNumber; i++) {
+			if (randomLengths[j][i] == maxPlatformLength) {
+				checkCount++;
+				break;
+			}
+			else {
+				frontPlatformStart = platformCenters[j + 1][i].z + randomLengths[j + 1][i] / 2;
+				spaceBetween = abs((platformCenters[j][i].z - randomLengths[j][i] / 2) - frontPlatformStart);
+				if (spaceBetween <= jumpableRowSpace) {
+					checkCount++;
+					break;
+				}
+			}
+		}
+	}
+	return checkCount >= rowNumber - 1;
+}
+bool Skyroads::CheckEligibleOnLanes() {
+	int count = 0;
+	int checkCount = 0;
+	float frontPlatformStart;
+	float spaceBetween;
+	for (int j = 0; j < rowNumber; j++) {
+		for (int i = 0; i < laneNumber; i++) {
+			if (randomWidths[j][i] - 6 <= jumpableLaneSpace) {
+				checkCount++;
+				break;
+			}
+		}
+
+	}
+	return checkCount >= rowNumber;
 }
 
 void Skyroads::FrameStart() {
@@ -141,7 +189,6 @@ void Skyroads::GeneratePlatforms(int zOffset ) {
 			
 			RenderAMesh(meshes["box"], shaders["Skyroads"], modelMatrix, platformColors[randomIndices[k]]);
 
-			
 			startIndex += randomWidths[j][i];
 			k++;
 			
@@ -159,14 +206,14 @@ void Skyroads::Update(float deltaTimeSeconds) {
 
 	float offset = deltaTimeSeconds * speed;
      translateZ += offset;
-	glm::vec3 sphereCoord = glm::vec3(platformX, 2.0f, -1.0f - translateZ);
-	modelMatrix = glm::translate(modelMatrix,sphereCoord);
+	sphereCoordonate= glm::vec3(platformX, 2.0f, -1.0f - translateZ);
+	modelMatrix = glm::translate(modelMatrix,sphereCoordonate);
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(2.0f));
-	//todo if in bounds of platform
-	if (sphereCoord.z > platformZ-randomLengths[currentRow][currentLane]/2) {
+	
+	if (sphereCoordonate.z > platformZ-randomLengths[currentRow][currentLane]/2) {
 		Skyroads::RenderAMesh(meshes["sphere"], shaders["Skyroads"], modelMatrix, playerColor);
 		auto camera = GetSceneCamera();
-		camera->SetPositionAndRotation(glm::vec3(sphereCoord.x, sphereCoord.y + 4, sphereCoord.z + 10), glm::vec3(-10 * TO_RADIANS, 0, 0));
+		camera->SetPositionAndRotation(glm::vec3(sphereCoordonate.x, sphereCoordonate.y + 4, sphereCoordonate.z + 10), glm::vec3(-10 * TO_RADIANS, 0, 0));
 		camera->Update();
 	}
 	
@@ -198,16 +245,26 @@ void Skyroads::OnInputUpdate(float deltaTime, int mods) {
 
 void Skyroads::OnKeyPress(int key, int mods) {
 	if (window->KeyHold(GLFW_KEY_A)) {
-		if (currentLane < laneNumber) {
+		if ((currentLane < laneNumber) &&(randomWidths[currentRow][currentLane] - 6 <= jumpableLaneSpace)) {
 			currentLane += 1;
 		}
 	 
 	}
 	else if (window->KeyHold(GLFW_KEY_D)) {
-		if (currentLane > 0) {
+		if ((currentLane > 0)&& (randomWidths[currentRow][currentLane-1] - 6 <= jumpableLaneSpace)) {
 			currentLane -= 1;
 		}
 	 
+	}
+	else if (window->KeyHold(GLFW_KEY_SPACE)) {
+		float frontPlatformStart= platformCenters[currentRow+1][currentLane].z+randomLengths[currentRow+1][currentLane]/2;
+		float spaceBetween = abs(sphereCoordonate.z - frontPlatformStart);
+
+		if (spaceBetween <= jumpableRowSpace) {
+			currentRow += 1;
+			translateZ+= spaceBetween;
+
+		}
 	}
 }
 void Skyroads::OnKeyRelease(int key, int mods) {
