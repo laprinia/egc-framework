@@ -32,7 +32,7 @@ private:
 	const int maxPlatformLength = 20;
 	const int minPlatformWidth = 6+2;
 	const int maxPlatformWidth = 6+7;
-	const glm::vec3 playerColor = glm::vec3(0.989f, 0.357f, 0.357f);
+	const glm::vec3 playerColor = glm::vec3(0.765f, 0.694f, 0.886f);
 	const float intensity = 0.20f;
 	const glm::vec3 lightPosition = glm::vec3(0, 80, 0);
 	const int materialShininess = 10;
@@ -50,6 +50,7 @@ private:
 	glm::vec3 sphereCoordonate;
 	float jumpableRowSpace = 6.0f;
 	float jumpableLaneSpace = 4.0f;
+	bool isFirstPerson = false;
 
 };
 
