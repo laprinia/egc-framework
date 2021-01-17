@@ -41,16 +41,16 @@ void Skyroads::Init() {
 		Mesh* mesh2 = new Mesh("sphere");
 		mesh2->LoadMesh(RESOURCE_PATH::MODELS + "Primitives", "sphere.obj");
 		meshes[mesh2->GetMeshID()] = mesh2;
-		
+
 
 		float length = 1.90f;
 		float width = 0.05f;
 		glm::vec3 corner = glm::vec3(-.96, -.96, 0);
 		glm::vec3 corner2 = glm::vec3(-.96, -.96, -1);
-		
-		Mesh* square1 = Rectangle2D::CreateSquare("square1", corner, width,length,glm::vec3(0, 0, 0), true);
+
+		Mesh* square1 = Rectangle2D::CreateSquare("square1", corner, width, length, glm::vec3(0, 0, 0), true);
 		AddMeshToList(square1);
-		Mesh* square2 = Rectangle2D::CreateSquare("square2", corner2, width, length, glm::vec3(0, 0, 0), true);
+		Mesh* square2 = Rectangle2D::CreateSquare("square2", corner2, width, length - 0.01f, glm::vec3(0, 0, 0), true);
 		AddMeshToList(square2);
 
 	}
@@ -136,10 +136,10 @@ void Skyroads::FrameStart() {
 	glClearColor(0.137f, 0.102f, 0.2f, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glm::ivec2 resolution = window->GetResolution();
-	
+
 	glViewport(0, 0, resolution.x, resolution.y);
 
-	
+
 
 }
 int Skyroads::GenerateRandomLength() {
@@ -197,14 +197,19 @@ void Skyroads::RenderAMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMat
 
 void Skyroads::HandleCurrentColorPowerup(int currentColorIndex) {
 	switch (currentColorIndex) {
-	case red: 
+	case red:
 		isEndGame = true;
 		break;
-	case yellow: //pierde combustibil
+	case yellow:
+		fuel-=fuel>1?0:0.01* fuel;
 		break;
-	case orange: //blocat la o viteza foarte mare, tastele nu au niciun efect
+	case orange: 
+		hasOrangePowerup = true;
+		orangeTimestamp = glfwGetTime();
+		speed = 10;
 		break;
-	case green: //recupereaza putin combust
+	case green:
+		fuel+=fuel>1?0:0.01* fuel;
 		break;
 
 	}
@@ -223,8 +228,8 @@ void Skyroads::GeneratePlatforms(int zOffset) {
 			modelMatrix = glm::scale(modelMatrix, glm::vec3(6.0f, 1.0f, randomLengths[j][i]));
 			bool isVisited = (currentLane == i) && (currentRow == j);
 
-			RenderAMesh(meshes["box"], shaders["Skyroads"], modelMatrix, isVisited ? glm::vec3(0.639f - intensity, 0.251f - intensity, 1 - intensity) : platformColors[randomIndices[k]],false);
-			if (isVisited) {
+			RenderAMesh(meshes["box"], shaders["Skyroads"], modelMatrix, isVisited ? glm::vec3(0.639f - intensity, 0.251f - intensity, 1 - intensity) : platformColors[randomIndices[k]], false);
+			if (isVisited&& canGetPowerup) {
 				HandleCurrentColorPowerup(randomIndices[k]);
 			}
 			startIndex += randomWidths[j][i];
@@ -236,13 +241,19 @@ void Skyroads::GeneratePlatforms(int zOffset) {
 
 }
 void Skyroads::Update(float deltaTimeSeconds) {
-
+	
+	
 	GeneratePlatforms(0);
+	canGetPowerup = false;
 
 	glm::mat4 modelMatrix = glm::mat4(1);
 	float platformX = (float)platformCenters[currentRow][currentLane].x;
 	float platformZ = (float)platformCenters[currentRow][currentLane].z;
 
+	if (hasOrangePowerup&&glfwGetTime()>=orangeTimestamp+orangeTimeToWait) {
+		speed = 1;
+		hasOrangePowerup = false;
+	}
 	float offset = deltaTimeSeconds * speed;
 	translateZ += offset;
 	sphereCoordonate = glm::vec3(platformX, 2.0f, -1.0f - translateZ);
@@ -250,18 +261,25 @@ void Skyroads::Update(float deltaTimeSeconds) {
 	modelMatrix = glm::scale(modelMatrix, glm::vec3(2.0f));
 
 	if (sphereCoordonate.z > platformZ - randomLengths[currentRow][currentLane] / 2 && !isEndGame) {
-		Skyroads::RenderAMesh(meshes["sphere"], shaders["Skyroads"], modelMatrix, playerColor,false);
+		Skyroads::RenderAMesh(meshes["sphere"], shaders["Skyroads"], modelMatrix, playerColor, false);
+		fuel -= offset * 0.009f;
 		auto camera = GetSceneCamera();
 		camera->SetPositionAndRotation(glm::vec3(sphereCoordonate.x, sphereCoordonate.y + (isFirstPerson ? 0 : 4), sphereCoordonate.z + (isFirstPerson ? -2 : 10)), glm::vec3((isFirstPerson ? 5 : -10) * TO_RADIANS, 0, 0));
 		camera->Update();
 	}
+
 	modelMatrix = glm::mat4(1);
 	Skyroads::RenderAMesh(meshes["square1"], shaders["Skyroads"], modelMatrix, playerColor, true);
-	
-	modelMatrix = glm::scale(modelMatrix, glm::vec3(0.5, 1, 1));
-	
-	
-	Skyroads::RenderAMesh(meshes["square2"], shaders["Skyroads"], modelMatrix, fuelColor, true);
+
+	modelMatrix = glm::scale(modelMatrix, glm::vec3(fuel, 1, 1));
+	if (fuel <= 0) {
+		isEndGame = true;
+	}
+	else {
+		Skyroads::RenderAMesh(meshes["square2"], shaders["Skyroads"], modelMatrix, fuelColor, true);
+	}
+
+
 
 
 }
@@ -273,12 +291,12 @@ void Skyroads::FrameEnd() {
 void Skyroads::OnInputUpdate(float deltaTime, int mods) {
 
 	float offset = deltaTime * speed;
-	if (window->KeyHold(GLFW_KEY_W)) {
+	if (window->KeyHold(GLFW_KEY_W)&& !hasOrangePowerup) {
 
 		speed += 0.4f;
 
 	}
-	else if (window->KeyHold(GLFW_KEY_S)) {
+	else if (window->KeyHold(GLFW_KEY_S) && !hasOrangePowerup) {
 
 		if (speed > 1) {
 			speed -= 0.4f;
@@ -290,31 +308,36 @@ void Skyroads::OnInputUpdate(float deltaTime, int mods) {
 }
 
 void Skyroads::OnKeyPress(int key, int mods) {
-	if (window->KeyHold(GLFW_KEY_A)) {
-		if ((currentLane < laneNumber) && (randomWidths[currentRow][currentLane] - 6 <= jumpableLaneSpace)) {
-			currentLane += 1;
-		}
-
-	}
-	else if (window->KeyHold(GLFW_KEY_D)) {
-		if ((currentLane > 0) && (randomWidths[currentRow][currentLane - 1] - 6 <= jumpableLaneSpace)) {
-			currentLane -= 1;
-		}
-
-	}
-	else if (window->KeyHold(GLFW_KEY_SPACE)) {
-		float frontPlatformStart = platformCenters[currentRow + 1][currentLane].z + randomLengths[currentRow + 1][currentLane] / 2;
-		float spaceBetween = abs(sphereCoordonate.z - frontPlatformStart);
-
-		if (spaceBetween <= jumpableRowSpace) {
-			currentRow += 1;
-			translateZ += spaceBetween;
+	if (!isEndGame) {
+		if (window->KeyHold(GLFW_KEY_A)) {
+			if ((currentLane < laneNumber) && (randomWidths[currentRow][currentLane] - 6 <= jumpableLaneSpace)) {
+				currentLane += 1;
+				canGetPowerup = true;
+			}
 
 		}
-	}
-	else if (window->KeyHold(GLFW_KEY_C)) {
-		isFirstPerson = !isFirstPerson;
+		else if (window->KeyHold(GLFW_KEY_D)) {
+			if ((currentLane > 0) && (randomWidths[currentRow][currentLane - 1] - 6 <= jumpableLaneSpace)) {
+				currentLane -= 1;
+				canGetPowerup = true;
+			}
 
+		}
+		else if (window->KeyHold(GLFW_KEY_SPACE)) {
+			float frontPlatformStart = platformCenters[currentRow + 1][currentLane].z + randomLengths[currentRow + 1][currentLane] / 2;
+			float spaceBetween = abs(sphereCoordonate.z - frontPlatformStart);
+
+			if (spaceBetween <= jumpableRowSpace) {
+				currentRow += 1;
+				translateZ += spaceBetween;
+				canGetPowerup = true;
+
+			}
+		}
+		else if (window->KeyHold(GLFW_KEY_C)) {
+			isFirstPerson = !isFirstPerson;
+
+		}
 	}
 }
 void Skyroads::OnKeyRelease(int key, int mods) {

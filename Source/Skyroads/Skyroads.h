@@ -50,11 +50,16 @@ private:
 	int currentRow = 0;
 	int currentLane = 1;
 	glm::vec3 sphereCoordonate;
-	float jumpableRowSpace = 6.0f;
+	float jumpableRowSpace = 7.0f;
 	float jumpableLaneSpace = 4.0f;
 	bool isFirstPerson = false;
 	enum platformColor { orange, blue, red, green, yellow, lime };
 	bool isEndGame = false;
+	float fuel = 1.0f;
+	bool canGetPowerup = true;
+	double orangeTimestamp;
+	double orangeTimeToWait = 5;
+	bool hasOrangePowerup = false;
 
 
 };
