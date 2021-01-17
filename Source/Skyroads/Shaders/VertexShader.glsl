@@ -14,6 +14,7 @@ uniform mat4 Model;
 uniform mat4 View;
 uniform mat4 Projection;
 uniform vec3 color;
+uniform bool isUI;
 
 void main() {
 
@@ -24,5 +25,5 @@ world_position =w_position;
 world_normal = w_normal;
 frag_color=color;
 
-gl_Position= Projection * View * Model * vec4(v_position,1.0);
+gl_Position=isUI?vec4(v_position,1.0) * Model:Projection * View * Model * vec4(v_position,1.0);
 }

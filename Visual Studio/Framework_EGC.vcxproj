@@ -45,6 +45,7 @@
     <ClCompile Include="..\Source\Laboratoare\Laborator8\Laborator8.cpp" />
     <ClCompile Include="..\Source\Laboratoare\Laborator9\Laborator9.cpp" />
     <ClCompile Include="..\Source\Main.cpp" />
+    <ClCompile Include="..\Source\Skyroads\Rectangle2D.cpp" />
     <ClCompile Include="..\Source\Skyroads\Skyroads.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -81,6 +82,7 @@
     <ClInclude Include="..\Source\Laboratoare\Laborator7\Laborator7.h" />
     <ClInclude Include="..\Source\Laboratoare\Laborator8\Laborator8.h" />
     <ClInclude Include="..\Source\Laboratoare\Laborator9\Laborator9.h" />
+    <ClInclude Include="..\Source\Skyroads\Rectangle2D.h" />
     <ClInclude Include="..\Source\Skyroads\Skyroads.h" />
   </ItemGroup>
   <ItemGroup>

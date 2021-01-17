@@ -28,9 +28,6 @@
     <Filter Include="Core\Managers">
       <UniqueIdentifier>{2940a1fd-9fef-46a7-93fb-a8241118d00a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Laboratoare\Laborator3">
-      <UniqueIdentifier>{f21df892-0e51-49dc-ac1e-32f90fc6fc4b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Laboratoare\Laborator4">
       <UniqueIdentifier>{03d968af-da09-43fb-ac60-276d51f376a0}</UniqueIdentifier>
     </Filter>
@@ -66,6 +63,9 @@
     </Filter>
     <Filter Include="Skyroads\Shaders">
       <UniqueIdentifier>{bfac32d7-e76b-44a2-b4f1-1e9afec5cbdd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Laboratoare\Laborator3">
+      <UniqueIdentifier>{718a77ee-a0f1-4d2f-ba8f-56f64798aa2e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -117,15 +117,6 @@
     <ClCompile Include="..\Source\Component\SceneInput.cpp">
       <Filter>Component</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Laboratoare\Laborator3\Laborator3.cpp">
-      <Filter>Laboratoare\Laborator3</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Laboratoare\Laborator3\Object2D.cpp">
-      <Filter>Laboratoare\Laborator3</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Source\Laboratoare\Laborator3\Laborator3_Vis2D.cpp">
-      <Filter>Laboratoare\Laborator3</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\Laboratoare\Laborator4\Laborator4.cpp">
       <Filter>Laboratoare\Laborator4</Filter>
     </ClCompile>
@@ -148,6 +139,18 @@
       <Filter>Skyroads</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\Main.cpp" />
+    <ClCompile Include="..\Source\Skyroads\Rectangle2D.cpp">
+      <Filter>Skyroads</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Laboratoare\Laborator3\Laborator3.cpp">
+      <Filter>Laboratoare\Laborator3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Laboratoare\Laborator3\Laborator3_Vis2D.cpp">
+      <Filter>Laboratoare\Laborator3</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Laboratoare\Laborator3\Object2D.cpp">
+      <Filter>Laboratoare\Laborator3</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Core\World.h">
@@ -213,18 +216,6 @@
     <ClInclude Include="..\Source\Component\SceneInput.h">
       <Filter>Component</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Laboratoare\Laborator3\Laborator3.h">
-      <Filter>Laboratoare\Laborator3</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Laboratoare\Laborator3\Transform2D.h">
-      <Filter>Laboratoare\Laborator3</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Laboratoare\Laborator3\Object2D.h">
-      <Filter>Laboratoare\Laborator3</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Source\Laboratoare\Laborator3\Laborator3_Vis2D.h">
-      <Filter>Laboratoare\Laborator3</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Laboratoare\Laborator4\Laborator4.h">
       <Filter>Laboratoare\Laborator4</Filter>
     </ClInclude>
@@ -251,6 +242,21 @@
     </ClInclude>
     <ClInclude Include="..\Source\Skyroads\Skyroads.h">
       <Filter>Skyroads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Skyroads\Rectangle2D.h">
+      <Filter>Skyroads</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Laboratoare\Laborator3\Laborator3.h">
+      <Filter>Laboratoare\Laborator3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Laboratoare\Laborator3\Laborator3_Vis2D.h">
+      <Filter>Laboratoare\Laborator3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Laboratoare\Laborator3\Object2D.h">
+      <Filter>Laboratoare\Laborator3</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Laboratoare\Laborator3\Transform2D.h">
+      <Filter>Laboratoare\Laborator3</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

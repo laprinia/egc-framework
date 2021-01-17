@@ -1,8 +1,8 @@
 #pragma once
 #include <Component/SimpleScene.h>
 
-class Skyroads: public SimpleScene
-{	
+class Skyroads : public SimpleScene
+{
 public:
 	Skyroads();
 	~Skyroads();
@@ -11,13 +11,14 @@ private:
 	void FrameStart() override;
 	void Update(float deltaTimeSeconds) override;
 	void FrameEnd() override;
+	void HandleCurrentColorPowerup(int currentColorIndex);
 	int GenerateRandomLength();
 	int GenerateRandomWidth();
 	bool CheckEligibleOnRows();
 	bool CheckEligibleOnLanes();
 	void GeneratePlatforms(int zOffset);
 	void GeneratePlatformData();
-	void RenderAMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMatrix, const glm::vec3& color);
+	void RenderAMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMatrix, const glm::vec3& color, bool isUI);
 	void OnInputUpdate(float deltaTime, int mods) override;
 	void OnKeyPress(int key, int mods) override;
 	void OnKeyRelease(int key, int mods) override;
@@ -30,9 +31,10 @@ private:
 	const static int rowNumber = 5;
 	const int minPlatformLength = 5;
 	const int maxPlatformLength = 20;
-	const int minPlatformWidth = 6+2;
-	const int maxPlatformWidth = 6+7;
+	const int minPlatformWidth = 6 + 2;
+	const int maxPlatformWidth = 6 + 2;
 	const glm::vec3 playerColor = glm::vec3(0.765f, 0.694f, 0.886f);
+	const glm::vec3 fuelColor = glm::vec3(0.263f, 0.263f, 0.275f);
 	const float intensity = 0.20f;
 	const glm::vec3 lightPosition = glm::vec3(0, 80, 0);
 	const int materialShininess = 10;
@@ -51,6 +53,9 @@ private:
 	float jumpableRowSpace = 6.0f;
 	float jumpableLaneSpace = 4.0f;
 	bool isFirstPerson = false;
+	enum platformColor { orange, blue, red, green, yellow, lime };
+	bool isEndGame = false;
+
 
 };
 
