@@ -42,7 +42,7 @@ private:
 	const float materialKs = 0.5f;
 	int randomWidths[rowNumber][laneNumber];
 	int randomLengths[rowNumber][laneNumber];
-	std::vector<int> randomIndices;
+	int randomIndices[rowNumber][laneNumber];
 	std::vector<glm::vec3> platformColors;
 	glm::vec3 platformCenters[rowNumber][laneNumber];
 	float speed;
@@ -60,7 +60,5 @@ private:
 	double orangeTimestamp;
 	double orangeTimeToWait = 5;
 	bool hasOrangePowerup = false;
-
-
 };
 

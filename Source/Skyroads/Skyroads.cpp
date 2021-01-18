@@ -8,8 +8,6 @@
 #include <Engine/Component/Transform/Transform.h>
 #include "Rectangle2D.h"
 
-
-
 Skyroads::Skyroads() {
 
 }
@@ -82,29 +80,30 @@ void Skyroads::GeneratePlatformData() {
 		for (int i = 0; i < laneNumber; i++) {
 			randomWidths[j][i] = GenerateRandomWidth();
 			randomLengths[j][i] = GenerateRandomLength();
+			randomIndices[j][i] = (rand() % 6);
 		}
 
 	}
-	for (int i = 0; i < laneNumber * rowNumber; i++) {
-		randomIndices.push_back(rand() % 6);
-	}
+
 }
 
 bool Skyroads::CheckEligibleOnRows() {
+
 	int count = 0;
 	int checkCount = 0;
 	float frontPlatformStart;
 	float spaceBetween;
+	if (randomIndices[currentRow][currentLane] == red || orange) return false;
 	for (int j = 0; j < rowNumber - 1; j++) {
 		for (int i = 0; i < laneNumber; i++) {
-			if (randomLengths[j][i] == maxPlatformLength) {
+			if (randomLengths[j][i] == maxPlatformLength && randomIndices[j][i] != red) {
 				checkCount++;
 				break;
 			}
 			else {
 				frontPlatformStart = platformCenters[j + 1][i].z + randomLengths[j + 1][i] / 2;
 				spaceBetween = abs((platformCenters[j][i].z - randomLengths[j][i] / 2) - frontPlatformStart);
-				if (spaceBetween <= jumpableRowSpace) {
+				if ((spaceBetween <= jumpableRowSpace)&& randomIndices[j][i] != red) {
 					checkCount++;
 					break;
 				}
@@ -113,6 +112,7 @@ bool Skyroads::CheckEligibleOnRows() {
 	}
 	return checkCount >= rowNumber - 1;
 }
+
 bool Skyroads::CheckEligibleOnLanes() {
 	int count = 0;
 	int checkCount = 0;
@@ -125,26 +125,23 @@ bool Skyroads::CheckEligibleOnLanes() {
 				break;
 			}
 		}
-
 	}
 	return checkCount >= rowNumber;
 }
 
 void Skyroads::FrameStart() {
 
-
 	glClearColor(0.137f, 0.102f, 0.2f, 0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glm::ivec2 resolution = window->GetResolution();
 
 	glViewport(0, 0, resolution.x, resolution.y);
-
-
-
 }
+
 int Skyroads::GenerateRandomLength() {
 	return rand() % (maxPlatformLength - minPlatformLength + 1) + minPlatformLength;
 }
+
 int Skyroads::GenerateRandomWidth() {
 	return rand() % (maxPlatformWidth - minPlatformWidth + 1) + minPlatformWidth;
 }
@@ -214,6 +211,7 @@ void Skyroads::HandleCurrentColorPowerup(int currentColorIndex) {
 
 	}
 }
+
 void Skyroads::GeneratePlatforms(int zOffset) {
 	int k = 0;
 	for (int j = 0; j < rowNumber; j++) {
@@ -228,9 +226,9 @@ void Skyroads::GeneratePlatforms(int zOffset) {
 			modelMatrix = glm::scale(modelMatrix, glm::vec3(6.0f, 1.0f, randomLengths[j][i]));
 			bool isVisited = (currentLane == i) && (currentRow == j);
 
-			RenderAMesh(meshes["box"], shaders["Skyroads"], modelMatrix, isVisited ? glm::vec3(0.639f - intensity, 0.251f - intensity, 1 - intensity) : platformColors[randomIndices[k]], false);
+			RenderAMesh(meshes["box"], shaders["Skyroads"], modelMatrix, isVisited ? glm::vec3(0.639f - intensity, 0.251f - intensity, 1 - intensity) : platformColors[randomIndices[j][i]], false);
 			if (isVisited&& canGetPowerup) {
-				HandleCurrentColorPowerup(randomIndices[k]);
+				HandleCurrentColorPowerup(randomIndices[j][i]);
 			}
 			startIndex += randomWidths[j][i];
 			k++;
@@ -240,6 +238,7 @@ void Skyroads::GeneratePlatforms(int zOffset) {
 	}
 
 }
+
 void Skyroads::Update(float deltaTimeSeconds) {
 	
 	
@@ -278,10 +277,6 @@ void Skyroads::Update(float deltaTimeSeconds) {
 	else {
 		Skyroads::RenderAMesh(meshes["square2"], shaders["Skyroads"], modelMatrix, fuelColor, true);
 	}
-
-
-
-
 }
 
 void Skyroads::FrameEnd() {
@@ -303,8 +298,6 @@ void Skyroads::OnInputUpdate(float deltaTime, int mods) {
 		}
 
 	}
-
-
 }
 
 void Skyroads::OnKeyPress(int key, int mods) {
