@@ -11,6 +11,7 @@ uniform vec3 eye_position;
 uniform float material_kd;
 uniform float material_ks;
 uniform int material_shininess;
+uniform bool isPlayer;
 
 
 void main()
@@ -34,5 +35,5 @@ float d	= distance(world_position,light_position);
 float factorAtenuare= 1/(1 + d * 0.06);
 
 vec3 res_color= frag_color* ambientala + (difuza * vec3(0.5,0.463,0.330) + specularaCalc * material_ks) * factorAtenuare;
-	out_color = vec4(res_color,1);
+out_color =isPlayer?vec4(world_normal,1): vec4(res_color,1);
 }

@@ -18,7 +18,7 @@ private:
 	bool CheckEligibleOnLanes();
 	void GeneratePlatforms(int zOffset);
 	void GeneratePlatformData();
-	void RenderAMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMatrix, const glm::vec3& color, bool isUI);
+	void RenderAMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMatrix, const glm::vec3& color, bool isUI, bool isPlayer,bool isRandomized);
 	void OnInputUpdate(float deltaTime, int mods) override;
 	void OnKeyPress(int key, int mods) override;
 	void OnKeyRelease(int key, int mods) override;
@@ -57,8 +57,8 @@ private:
 	bool isEndGame = false;
 	float fuel = 1.0f;
 	bool canGetPowerup = true;
-	double orangeTimestamp;
-	double orangeTimeToWait = 5;
+	double powerupTimestamp;
+	double powerupTimeToWait = 5;
 	bool hasOrangePowerup = false;
 };
 
