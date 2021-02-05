@@ -201,7 +201,7 @@ void Skyroads::HandleCurrentColorPowerup(int currentColorIndex) {
 		powerupTimestamp = glfwGetTime();
 		break;
 	case yellow:
-		fuel -= fuel > 1 ? 0 : 0.01 * fuel;
+		fuel -= fuel < 0? 0 : 0.01 * fuel;
 		powerupTimestamp = glfwGetTime();
 		break;
 	case orange:
@@ -225,11 +225,12 @@ void Skyroads::GeneratePlatforms(int zOffset) {
 
 			glm::mat4 modelMatrix = glm::mat4(1);
 
-			glm::vec3 gravityCenter = glm::vec3(-(startIndex + 3), 0.5f, -(zOffset + randomLengths[j][i] / 2));
-			platformCenters[j][i] = gravityCenter;
-			modelMatrix = glm::translate(modelMatrix, gravityCenter);
+			glm::vec3 minusGravityCenter = glm::vec3(-(startIndex + 3), 0.5f, -(zOffset + randomLengths[j][i] / 2));
+			platformCenters[j][i] = minusGravityCenter;
+			modelMatrix = glm::translate(modelMatrix, minusGravityCenter);
 			modelMatrix = glm::scale(modelMatrix, glm::vec3(6.0f, 1.0f, randomLengths[j][i]));
 			bool isVisited = (currentLane == i) && (currentRow == j);
+
 			if (!(j < currentRow)) {
 				RenderAMesh(meshes["box"], shaders["Skyroads"], modelMatrix, isVisited ? glm::vec3(0.639f - intensity, 0.251f - intensity, 1 - intensity) : platformColors[randomIndices[j][i]], false, false, false);
 			}
