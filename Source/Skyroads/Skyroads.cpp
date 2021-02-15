@@ -103,7 +103,7 @@ bool Skyroads::CheckEligibleOnRows() {
 			else {
 				frontPlatformStart = platformCenters[j + 1][i].z + randomLengths[j + 1][i] / 2;
 				spaceBetween = abs((platformCenters[j][i].z - randomLengths[j][i] / 2) - frontPlatformStart);
-				if ((spaceBetween +2 <= jumpableRowSpace) && randomIndices[j][i] != red) {
+				if ((spaceBetween +3 <= jumpableRowSpace) && randomIndices[j][i] != red) {
 					checkCount++;
 					break;
 				}
@@ -201,7 +201,7 @@ void Skyroads::HandleCurrentColorPowerup(int currentColorIndex) {
 		powerupTimestamp = glfwGetTime();
 		break;
 	case yellow:
-		fuel -= fuel < 0? 0 : 0.01 * fuel;
+		fuel -= fuel < 0? 0 : 0.20 * fuel;
 		powerupTimestamp = glfwGetTime();
 		break;
 	case orange:
@@ -210,13 +210,50 @@ void Skyroads::HandleCurrentColorPowerup(int currentColorIndex) {
 		speed = 10;
 		break;
 	case green:
-		fuel += fuel > 1 ? 0 : 0.01 * fuel;
+		fuel += fuel > 1 ? 0 : 0.20 * fuel;
 		powerupTimestamp = glfwGetTime();
 		break;
 
 	}
 }
+bool Skyroads::CheckCollisionBetweenTwo(glm::vec3 onePosition, glm::vec3 oneSize, glm::vec3 twoPosition, glm::vec3 twoSize)
+{
+	
+		bool collisionX = onePosition.x + oneSize.x >= twoPosition.x &&
+			twoPosition.x + twoSize.x >= onePosition.x;
+		
+		bool collisionY = onePosition.y + oneSize.y >= twoPosition.y &&
+			twoPosition.y + twoSize.y >= onePosition.y;
+		
+		bool collisionZ = onePosition.z + oneSize.z >= twoPosition.z &&
+			twoPosition.z + twoSize.y >= onePosition.z;
 
+		return collisionZ && collisionY && collisionX;
+	
+}
+std::string Skyroads::getPlatformColorName(int indexInEnum)
+{
+	switch (indexInEnum) {
+	case red:
+		return "red";
+		break;
+	case yellow:
+		return "yellow";
+		break;
+	case orange:
+		return "orange";
+		break;
+	case green:
+		return "green";
+		break;
+	case blue:
+		return "blue";
+		break;
+	case lime:
+		return "lime";
+		break;
+	}
+}
 void Skyroads::GeneratePlatforms(int zOffset) {
 	int k = 0;
 	for (int j = 0; j < rowNumber; j++) {
@@ -233,6 +270,9 @@ void Skyroads::GeneratePlatforms(int zOffset) {
 
 			if (!(j < currentRow)) {
 				RenderAMesh(meshes["box"], shaders["Skyroads"], modelMatrix, isVisited ? glm::vec3(0.639f - intensity, 0.251f - intensity, 1 - intensity) : platformColors[randomIndices[j][i]], false, false, false);
+			}
+			if (CheckCollisionBetweenTwo(glm::vec3(sphereCoordonate.x,sphereCoordonate.y-2,sphereCoordonate.z+1), glm::vec3(2.0f), minusGravityCenter, glm::vec3(6.0f, 1.0f, randomLengths[j][i]))) {
+				std::cout << "Sphere player collided w/ platform colored "<< getPlatformColorName(randomIndices[j][i]) << std::endl;
 			}
 
 			if (isVisited && canGetPowerup) {

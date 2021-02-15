@@ -18,6 +18,7 @@ private:
 	bool CheckEligibleOnLanes();
 	void GeneratePlatforms(int zOffset);
 	void GeneratePlatformData();
+	bool CheckCollisionBetweenTwo(glm::vec3 onePosition, glm::vec3 oneSize, glm::vec3 twoPosition, glm::vec3 twoSize);
 	void RenderAMesh(Mesh* mesh, Shader* shader, const glm::mat4& modelMatrix, const glm::vec3& color, bool isUI, bool isPlayer,bool isRandomized);
 	void OnInputUpdate(float deltaTime, int mods) override;
 	void OnKeyPress(int key, int mods) override;
@@ -27,6 +28,7 @@ private:
 	void OnMouseBtnRelease(int mouseX, int mouseY, int button, int mods) override;
 	void OnMouseScroll(int mouseX, int mouseY, int offsetX, int offsetY) override;
 	void OnWindowResize(int width, int height) override;
+	std::string getPlatformColorName(int indexInEnum);
 	const static int laneNumber = 4;
 	const static int rowNumber = 5;
 	const int minPlatformLength = 5;
@@ -53,7 +55,7 @@ private:
 	float jumpableRowSpace = 7.0f;
 	float jumpableLaneSpace = 4.0f;
 	bool isFirstPerson = false;
-	enum platformColor { orange, blue, red, green, yellow, lime };
+	enum platformColor { orange, blue, red, green, yellow, lime};
 	bool isEndGame = false;
 	float fuel = 1.0f;
 	bool canGetPowerup = true;
