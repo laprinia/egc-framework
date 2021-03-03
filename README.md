@@ -21,6 +21,6 @@
 * Phong Lighting.
 
 
-### 📷Screenshots:
+### 📷Demo GIF:
 
 ![egc screenshot](/demo/demo.gif "Skyroads Demo")
