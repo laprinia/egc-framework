@@ -201,7 +201,7 @@ void Skyroads::HandleCurrentColorPowerup(int currentColorIndex) {
 		powerupTimestamp = glfwGetTime();
 		break;
 	case yellow:
-		fuel -= fuel < 0? 0 : 0.20 * fuel;
+		fuel -= fuel- 0.20 * fuel < 0? 0 : 0.20 * fuel;
 		powerupTimestamp = glfwGetTime();
 		break;
 	case orange:
@@ -210,7 +210,7 @@ void Skyroads::HandleCurrentColorPowerup(int currentColorIndex) {
 		speed = 10;
 		break;
 	case green:
-		fuel += fuel > 1 ? 0 : 0.20 * fuel;
+		fuel += fuel+ 0.20 * fuel > 1 ? 0 : 0.20 * fuel;
 		powerupTimestamp = glfwGetTime();
 		break;
 
@@ -296,6 +296,7 @@ void Skyroads::Update(float deltaTimeSeconds) {
 	glm::mat4 modelMatrix = glm::mat4(1);
 	float platformX = (float)platformCenters[currentRow][currentLane].x;
 	float platformZ = (float)platformCenters[currentRow][currentLane].z;
+
 	bool isPowerupExpired = glfwGetTime() >= powerupTimestamp + powerupTimeToWait;
 
 	if (hasOrangePowerup && isPowerupExpired) {

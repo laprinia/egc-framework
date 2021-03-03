@@ -1,7 +1,8 @@
 # General
 /*
 !.gitignore
-
+!README.md
+!/demo
 !/Visual Studio
 /Visual Studio/*
 !/Visual Studio/Property Sheets

@@ -136,8 +136,8 @@ frag_color=color;
 //DISPLACEMENT
 float noise= 1.0 * -.10 * turbulence(.5+ v_normal);
 float b= 2.0 * pnoise(0.05+ world_position, vec3(100.0));
-float displacement= -10. * noise+b;
-vec3 displacedPosition= v_position + v_normal * displacement* 0.2;
+float displacement = -10. * noise+b;
+vec3 displacedPosition = v_position + v_normal * displacement* 0.2;
 
 vec4 newPosition = isRandomized?vec4(displacedPosition,1.0):vec4(v_position,1.0);
 
